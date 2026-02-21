@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kisan Vaani - Buyer Dashboard | खरीदार</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green-deep: #1a4a1a;
+            --green-mid: #2d7a2d;
+            --green-light: #4caf50;
+            --earth: #8b5e3c;
+            --gold: #f5c842;
+            --cream: #fdf8ef;
+            --white: #ffffff;
+            --text-dark: #1a2e1a;
+            --text-muted: #6b7c6b;
+            --border: #e4efe4;
+            --card-shadow: 0 4px 20px rgba(26,74,26,0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5faf5;
+            color: var(--text-dark);
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, var(--green-deep), var(--green-mid));
+            padding: 0 32px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .nav-logo {
+            font-family: 'Yatra One', cursive;
+            font-size: 1.5rem;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .nav-logo a { color: inherit; text-decoration: none; }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .nav-badge {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .cart-btn {
+            background: var(--gold);
+            color: var(--green-deep);
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            transition: all 0.2s;
+        }
+
+        .cart-btn:hover { transform: scale(1.05); background: #ffd700; }
+
+        .cart-count {
+            background: var(--green-deep);
+            color: var(--gold);
+            border-radius: 50%;
+            width: 20px; height: 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .back-link {
+            color: rgba(255,255,255,0.75);
+            font-size: 0.8rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: white; }
+
+        /* Hero strip */
+        .hero-strip {
+            background: linear-gradient(135deg, #e8f5e9, #f1faf1);
+            border-bottom: 2px solid #c8e6c9;
+            padding: 28px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .hero-greet h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--green-deep);
+        }
+
+        .hero-greet p {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            margin-top: 4px;
+        }
+
+        /* Search bar */
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+            max-width: 520px;
+            margin: 0 24px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 12px 18px 12px 44px;
+            border: 2px solid #c8e6c9;
+            border-radius: 25px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            outline: none;
+            background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%239dbf9e' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E") no-repeat 16px center;
+            transition: all 0.2s;
+        }
+
+        .search-bar input:focus {
+            border-color: var(--green-light);
+            box-shadow: 0 0 0 4px rgba(76,175,80,0.1);
+        }
+
+        .search-btn {
+            background: var(--green-mid);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 22px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            font-size: 0.88rem;
+            transition: all 0.2s;
+        }
+
+        .search-btn:hover { background: var(--green-deep); }
+
+        /* Stats bar */
+        .stats-bar {
+            display: flex;
+            gap: 0;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+        }
+
+        .stat-item {
+            flex: 1;
+            min-width: 140px;
+            padding: 16px 24px;
+            text-align: center;
+            border-right: 1px solid var(--border);
+        }
+
+        .stat-item:last-child { border-right: none; }
+
+        .stat-num {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--green-mid);
+        }
+
+        .stat-label {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Main layout */
+        .main-layout {
+            display: flex;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 28px 24px;
+            gap: 24px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 230px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .sidebar-card h3 {
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .filter-group { margin-bottom: 14px; }
+
+        .filter-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .filter-group select, .filter-group input[type="range"] {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.82rem;
+            color: var(--text-dark);
+            outline: none;
+            background: #fafff9;
+        }
+
+        .filter-group select:focus { border-color: var(--green-light); }
+
+        .price-display {
+            font-size: 0.78rem;
+            color: var(--green-mid);
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.82rem;
+            cursor: pointer;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            accent-color: var(--green-light);
+        }
+
+        .apply-filter {
+            width: 100%;
+            background: linear-gradient(135deg, var(--green-mid), var(--green-light));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            transition: all 0.2s;
+        }
+
+        .apply-filter:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        /* Main content */
+        .content-area { flex: 1; }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+
+        .section-header h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .section-header span {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .sort-select {
+            padding: 7px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.8rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Category tabs */
+        .category-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+        }
+
+        .cat-tab {
+            padding: 8px 18px;
+            border-radius: 20px;
+            border: 2px solid var(--border);
+            background: white;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .cat-tab.active {
+            background: var(--green-mid);
+            border-color: var(--green-mid);
+            color: white;
+        }
+
+        .cat-tab:hover:not(.active) {
+            border-color: var(--green-light);
+            color: var(--green-mid);
+        }
+
+        /* Product grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 18px;
+        }
+
+        .product-card {
+            background: var(--white);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(26,74,26,0.15);
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--gold);
+            color: var(--green-deep);
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            z-index: 2;
+        }
+
+        .card-badge.fresh { background: #4caf50; color: white; }
+        .card-badge.organic { background: #8bc34a; color: white; }
+
+        .wishlist-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 32px; height: 32px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+            z-index: 2;
+        }
+
+        .wishlist-btn:hover { transform: scale(1.15); }
+        .wishlist-btn.active i { color: #e53935; }
+        .wishlist-btn i { color: #ccc; font-size: 0.9rem; }
+
+        .card-img {
+            width: 100%;
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            background: linear-gradient(135deg, #f1faf1, #e8f5e9);
+        }
+
+        .card-body { padding: 14px; }
+
+        .card-crop-name {
+            font-weight: 700;
+            font-size: 0.98rem;
+            color: var(--text-dark);
+            margin-bottom: 2px;
+        }
+
+        .card-hindi {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .card-farmer {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .farmer-dot {
+            width: 22px; height: 22px;
+            background: linear-gradient(135deg, var(--green-light), #8bc34a);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+        }
+
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 12px;
+        }
+
+        .card-price {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--green-deep);
+        }
+
+        .card-price span {
+            font-size: 0.7rem;
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+
+        .card-qty {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            text-align: right;
+        }
+
+        .rating {
+            font-size: 0.72rem;
+            color: #f5a623;
+            margin-bottom: 10px;
+        }
+
+        .rating span { color: var(--text-muted); margin-left: 4px; }
+
+        .card-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-add-cart {
+            flex: 1;
+            background: linear-gradient(135deg, var(--green-mid), var(--green-light));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 9px 10px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 0.78rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .btn-add-cart:hover { opacity: 0.9; transform: scale(1.02); }
+
+        .btn-contact {
+            background: transparent;
+            color: var(--green-mid);
+            border: 2px solid var(--green-light);
+            border-radius: 10px;
+            padding: 9px 12px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.78rem;
+            transition: all 0.2s;
+        }
+
+        .btn-contact:hover { background: #f1faf1; }
+
+        /* Order section */
+        .orders-section {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border);
+            margin-top: 24px;
+        }
+
+        .orders-section h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .order-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .order-item:last-child { border-bottom: none; }
+
+        .order-icon {
+            width: 44px; height: 44px;
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        .order-info { flex: 1; }
+        .order-name { font-weight: 600; font-size: 0.9rem; }
+        .order-detail { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+
+        .order-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-delivered { background: #e8f5e9; color: var(--green-mid); }
+        .status-transit { background: #fff8e1; color: #f57f17; }
+        .status-pending { background: #fce4ec; color: #c62828; }
+
+        /* Cart overlay */
+        .cart-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .cart-overlay.open { opacity: 1; pointer-events: all; }
+
+        .cart-panel {
+            position: fixed;
+            top: 0; right: -420px;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            z-index: 201;
+            box-shadow: -10px 0 40px rgba(0,0,0,0.2);
+            transition: right 0.4s cubic-bezier(0.22,1,0.36,1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-panel.open { right: 0; }
+
+        .cart-header {
+            background: linear-gradient(135deg, var(--green-deep), var(--green-mid));
+            color: white;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .cart-header h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .close-cart {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .close-cart:hover { background: rgba(255,255,255,0.3); }
+
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cart-item-emoji { font-size: 1.8rem; }
+
+        .cart-item-info { flex: 1; }
+        .cart-item-name { font-weight: 600; font-size: 0.88rem; }
+        .cart-item-price { font-size: 0.8rem; color: var(--green-mid); font-weight: 700; }
+
+        .qty-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .qty-btn {
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            border: 1.5px solid var(--border);
+            background: white;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .qty-btn:hover { border-color: var(--green-light); color: var(--green-mid); }
+
+        .qty-num { font-size: 0.85rem; font-weight: 600; min-width: 20px; text-align: center; }
+
+        .cart-footer {
+            padding: 20px 24px;
+            border-top: 2px solid var(--border);
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            font-size: 1.05rem;
+            margin-bottom: 14px;
+            color: var(--text-dark);
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--green-mid), var(--green-light));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .checkout-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        .empty-cart {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-cart .icon { font-size: 3rem; margin-bottom: 12px; }
+        .empty-cart p { font-size: 0.9rem; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--green-deep);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+            z-index: 300;
+            white-space: nowrap;
+        }
+
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .main-layout { padding: 16px; }
+            .hero-strip { flex-direction: column; }
+            .search-bar { max-width: 100%; margin: 0; }
+        }
+
+        @media (max-width: 600px) {
+            .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .cart-panel { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Cart Overlay -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+    <div class="cart-panel" id="cartPanel">
+        <div class="cart-header">
+            <h3><i class="fas fa-shopping-basket"></i> आपका कार्ट / Your Cart</h3>
+            <button class="close-cart" onclick="toggleCart()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <div class="empty-cart">
+                <div class="icon">🛒</div>
+                <p>आपका कार्ट खाली है<br><em>Your cart is empty</em></p>
+            </div>
+        </div>
+        <div class="cart-footer" id="cartFooter" style="display:none">
+            <div class="cart-total">
+                <span>कुल / Total</span>
+                <span id="cartTotal">₹0</span>
+            </div>
+            <button class="checkout-btn" onclick="checkout()">
+                <i class="fas fa-check-circle"></i> ऑर्डर करें / Place Order
+            </button>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-logo">
+            <i class="fas fa-seedling"></i> Kisan Vaani 👨🏽‍🌾
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+            <a href="index.html" class="back-link"><i class="fas fa-home"></i> Home</a>
+            <div class="nav-badge">🛒 Buyer / खरीदार</div>
+            <button class="cart-btn" onclick="toggleCart()">
+                <i class="fas fa-shopping-basket"></i>
+                Cart
+                <div class="cart-count" id="cartCountBadge">0</div>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Strip -->
+    <div class="hero-strip">
+        <div class="hero-greet">
+            <h2>🛒 Buyer Marketplace</h2>
+            <p>सीधे किसानों से ताज़ा फसल खरीदें • Buy fresh produce directly from farmers</p>
+        </div>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="🔍 फसल खोजें... Search crops, vegetables..." oninput="filterProducts()">
+            <button class="search-btn" onclick="filterProducts()">खोजें</button>
+        </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-num">1,240+</div>
+            <div class="stat-label">Active Listings</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num">380+</div>
+            <div class="stat-label">Farmers / किसान</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num">18</div>
+            <div class="stat-label">States Covered</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num">24h</div>
+            <div class="stat-label">Delivery / डिलीवरी</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num">4.8 ⭐</div>
+            <div class="stat-label">Avg. Rating</div>
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-card">
+                <h3>🔍 Filters / फ़िल्टर</h3>
+
+                <div class="filter-group">
+                    <label>State / राज्य</label>
+                    <select>
+                        <option value="">All States</option>
+                        <option>Punjab</option>
+                        <option>Haryana</option>
+                        <option>Uttar Pradesh</option>
+                        <option>West Bengal</option>
+                        <option>Telangana</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Max Price / अधिकतम मूल्य</label>
+                    <input type="range" min="0" max="5000" value="5000" id="priceRange" oninput="document.getElementById('priceVal').textContent = '₹' + this.value">
+                    <div class="price-display" id="priceVal">₹5000</div>
+                </div>
+
+                <div class="filter-group">
+                    <label>Certifications</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item"><input type="checkbox"> Organic / जैविक</label>
+                        <label class="checkbox-item"><input type="checkbox"> FSSAI Certified</label>
+                        <label class="checkbox-item"><input type="checkbox"> Natural Farming</label>
+                        <label class="checkbox-item"><input type="checkbox"> Zero Pesticide</label>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label>Delivery</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item"><input type="checkbox"> Same Day</label>
+                        <label class="checkbox-item"><input type="checkbox"> Next Day</label>
+                        <label class="checkbox-item"><input type="checkbox"> Within 3 Days</label>
+                    </div>
+                </div>
+
+                <button class="apply-filter">Apply Filters / लागू करें</button>
+            </div>
+
+            <div class="sidebar-card">
+                <h3>📦 My Orders</h3>
+                <div style="font-size:0.8rem; color:var(--text-muted);">
+                    <div style="margin-bottom:10px; padding-bottom:10px; border-bottom:1px solid var(--border);">
+                        🌾 Wheat — 50kg<br>
+                        <span style="color:#f57f17; font-weight:600;">In Transit</span>
+                    </div>
+                    <div style="margin-bottom:10px; padding-bottom:10px; border-bottom:1px solid var(--border);">
+                        🍅 Tomatoes — 20kg<br>
+                        <span style="color:var(--green-mid); font-weight:600;">Delivered ✓</span>
+                    </div>
+                    <div>
+                        🧅 Onions — 30kg<br>
+                        <span style="color:#c62828; font-weight:600;">Pending</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Content Area -->
+        <main class="content-area">
+            <!-- Category Tabs -->
+            <div class="category-tabs" id="categoryTabs">
+                <button class="cat-tab active" onclick="filterCategory('all', this)">🌾 All</button>
+                <button class="cat-tab" onclick="filterCategory('grain', this)">🌾 Grains / अनाज</button>
+                <button class="cat-tab" onclick="filterCategory('vegetable', this)">🥦 Vegetables / सब्ज़ियाँ</button>
+                <button class="cat-tab" onclick="filterCategory('fruit', this)">🍎 Fruits / फल</button>
+                <button class="cat-tab" onclick="filterCategory('spice', this)">🌶️ Spices / मसाले</button>
+                <button class="cat-tab" onclick="filterCategory('dairy', this)">🥛 Dairy / डेयरी</button>
+            </div>
+
+            <div class="section-header">
+                <h2>Available Listings <span id="listingCount">(12)</span></h2>
+                <select class="sort-select" onchange="sortProducts(this.value)">
+                    <option value="default">Sort / क्रमबद्ध करें</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="rating">Highest Rated</option>
+                    <option value="fresh">Freshest First</option>
+                </select>
+            </div>
+
+            <!-- Product Grid -->
+            <div class="product-grid" id="productGrid"></div>
+
+            <!-- Recent Orders -->
+            <div class="orders-section">
+                <h2><i class="fas fa-history"></i> Recent Orders / हाल के ऑर्डर</h2>
+                <div class="order-item">
+                    <div class="order-icon">🌾</div>
+                    <div class="order-info">
+                        <div class="order-name">Basmati Rice — 50kg</div>
+                        <div class="order-detail">From: Ram Singh, Punjab • Ordered: Feb 18, 2025 • ₹3,500</div>
+                    </div>
+                    <span class="order-status status-delivered">Delivered</span>
+                </div>
+                <div class="order-item">
+                    <div class="order-icon">🍅</div>
+                    <div class="order-info">
+                        <div class="order-name">Organic Tomatoes — 20kg</div>
+                        <div class="order-detail">From: Sunita Devi, Haryana • Ordered: Feb 20, 2025 • ₹800</div>
+                    </div>
+                    <span class="order-status status-transit">In Transit</span>
+                </div>
+                <div class="order-item">
+                    <div class="order-icon">🧅</div>
+                    <div class="order-info">
+                        <div class="order-name">Red Onions — 30kg</div>
+                        <div class="order-detail">From: Arjun Patel, UP • Ordered: Feb 21, 2025 • ₹1,200</div>
+                    </div>
+                    <span class="order-status status-pending">Pending</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const products = [
+            { id: 1, name: 'Basmati Rice', hindi: 'बासमती चावल', emoji: '🌾', farmer: 'Ram Singh', state: 'Punjab', price: 70, unit: 'kg', minQty: '50kg', rating: 4.8, reviews: 124, badge: 'Premium', category: 'grain', certified: true },
+            { id: 2, name: 'Organic Tomatoes', hindi: 'जैविक टमाटर', emoji: '🍅', farmer: 'Sunita Devi', state: 'Haryana', price: 40, unit: 'kg', minQty: '10kg', rating: 4.6, reviews: 87, badge: 'organic', category: 'vegetable', certified: true },
+            { id: 3, name: 'Yellow Mustard', hindi: 'पीली सरसों', emoji: '🌼', farmer: 'Vikram Yadav', state: 'Rajasthan', price: 90, unit: 'kg', minQty: '25kg', rating: 4.5, reviews: 56, badge: 'fresh', category: 'spice', certified: false },
+            { id: 4, name: 'Fresh Spinach', hindi: 'पालक', emoji: '🥬', farmer: 'Meena Bai', state: 'UP', price: 25, unit: 'kg', minQty: '5kg', rating: 4.7, reviews: 203, badge: 'fresh', category: 'vegetable', certified: false },
+            { id: 5, name: 'Alphonso Mango', hindi: 'अल्फांसो आम', emoji: '🥭', farmer: 'Suresh Patil', state: 'Maharashtra', price: 350, unit: 'dozen', minQty: '2 dozen', rating: 4.9, reviews: 312, badge: 'Premium', category: 'fruit', certified: true },
+            { id: 6, name: 'Red Chilli', hindi: 'लाल मिर्च', emoji: '🌶️', farmer: 'Lakshmi Reddy', state: 'Telangana', price: 120, unit: 'kg', minQty: '10kg', rating: 4.4, reviews: 78, badge: 'organic', category: 'spice', certified: true },
+            { id: 7, name: 'Fresh Milk', hindi: 'ताज़ा दूध', emoji: '🥛', farmer: 'Girdhar Lal', state: 'Punjab', price: 55, unit: 'ltr', minQty: '10 liters', rating: 4.8, reviews: 145, badge: 'fresh', category: 'dairy', certified: false },
+            { id: 8, name: 'Wheat Flour', hindi: 'गेहूँ का आटा', emoji: '🌾', farmer: 'Harjinder Singh', state: 'Punjab', price: 35, unit: 'kg', minQty: '50kg', rating: 4.6, reviews: 234, badge: 'Premium', category: 'grain', certified: false },
+            { id: 9, name: 'Bottle Gourd', hindi: 'लौकी', emoji: '🫙', farmer: 'Ramesh Kumar', state: 'Bihar', price: 18, unit: 'kg', minQty: '10kg', rating: 4.3, reviews: 45, badge: 'fresh', category: 'vegetable', certified: false },
+            { id: 10, name: 'Banana Bunch', hindi: 'केला', emoji: '🍌', farmer: 'Annamalai', state: 'Tamil Nadu', price: 60, unit: 'dozen', minQty: '5 dozen', rating: 4.5, reviews: 189, badge: 'fresh', category: 'fruit', certified: false },
+            { id: 11, name: 'Turmeric Powder', hindi: 'हल्दी', emoji: '🟡', farmer: 'Savitri Nair', state: 'Kerala', price: 200, unit: 'kg', minQty: '5kg', rating: 4.9, reviews: 98, badge: 'organic', category: 'spice', certified: true },
+            { id: 12, name: 'Desi Ghee', hindi: 'देसी घी', emoji: '🧈', farmer: 'Bhavna Sharma', state: 'Gujarat', price: 600, unit: 'kg', minQty: '2kg', rating: 4.8, reviews: 76, badge: 'Premium', category: 'dairy', certified: true },
+        ];
+
+        let cart = {};
+        let currentCategory = 'all';
+        let wishlist = new Set();
+
+        function renderProducts(list) {
+            const grid = document.getElementById('productGrid');
+            document.getElementById('listingCount').textContent = `(${list.length})`;
+            grid.innerHTML = list.map(p => `
+                <div class="product-card" id="card-${p.id}">
+                    <div class="card-badge ${p.badge === 'organic' ? 'organic' : p.badge === 'fresh' ? 'fresh' : ''}">${p.badge === 'organic' ? '🌿 Organic' : p.badge === 'fresh' ? '✨ Fresh' : '⭐ ' + p.badge}</div>
+                    <button class="wishlist-btn ${wishlist.has(p.id) ? 'active' : ''}" onclick="toggleWishlist(${p.id}, this)">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <div class="card-img">${p.emoji}</div>
+                    <div class="card-body">
+                        <div class="card-crop-name">${p.name}</div>
+                        <div class="card-hindi">${p.hindi}</div>
+                        <div class="card-farmer">
+                            <div class="farmer-dot">🧑</div>
+                            ${p.farmer}, ${p.state}
+                        </div>
+                        <div class="rating">
+                            ${'★'.repeat(Math.floor(p.rating))}${'☆'.repeat(5 - Math.floor(p.rating))}
+                            <span>(${p.reviews})</span>
+                        </div>
+                        <div class="card-meta">
+                            <div class="card-price">₹${p.price} <span>/ ${p.unit}</span></div>
+                            <div class="card-qty">Min: ${p.minQty}</div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn-add-cart" onclick="addToCart(${p.id})">
+                                <i class="fas fa-cart-plus"></i> Add to Cart
+                            </button>
+                            <button class="btn-contact" onclick="contactFarmer('${p.farmer}')">
+                                <i class="fas fa-phone"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterCategory(cat, btn) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            applyFilters();
+        }
+
+        function filterProducts() {
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            let filtered = products;
+            if (currentCategory !== 'all') filtered = filtered.filter(p => p.category === currentCategory);
+            if (query) filtered = filtered.filter(p =>
+                p.name.toLowerCase().includes(query) ||
+                p.hindi.includes(query) ||
+                p.farmer.toLowerCase().includes(query) ||
+                p.state.toLowerCase().includes(query)
+            );
+            renderProducts(filtered);
+        }
+
+        function sortProducts(val) {
+            let list = [...products];
+            if (val === 'price-low') list.sort((a, b) => a.price - b.price);
+            else if (val === 'price-high') list.sort((a, b) => b.price - a.price);
+            else if (val === 'rating') list.sort((a, b) => b.rating - a.rating);
+            renderProducts(list);
+        }
+
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+            cart[id] = cart[id] ? { ...cart[id], qty: cart[id].qty + 1 } : { ...product, qty: 1 };
+            updateCartUI();
+            showToast(`${product.emoji} ${product.name} कार्ट में जोड़ा! Added to cart!`);
+        }
+
+        function updateCartUI() {
+            const cartItems = document.getElementById('cartItems');
+            const cartFooter = document.getElementById('cartFooter');
+            const items = Object.values(cart);
+
+            document.getElementById('cartCountBadge').textContent = items.reduce((a, b) => a + b.qty, 0);
+
+            if (items.length === 0) {
+                cartItems.innerHTML = `<div class="empty-cart"><div class="icon">🛒</div><p>आपका कार्ट खाली है<br><em>Your cart is empty</em></p></div>`;
+                cartFooter.style.display = 'none';
+                return;
+            }
+
+            cartFooter.style.display = 'block';
+            const total = items.reduce((a, b) => a + b.price * b.qty, 0);
+            document.getElementById('cartTotal').textContent = `₹${total.toLocaleString('en-IN')}`;
+
+            cartItems.innerHTML = items.map(item => `
+                <div class="cart-item">
+                    <div class="cart-item-emoji">${item.emoji}</div>
+                    <div class="cart-item-info">
+                        <div class="cart-item-name">${item.name}</div>
+                        <div class="cart-item-price">₹${item.price} × ${item.qty} = ₹${item.price * item.qty}</div>
+                    </div>
+                    <div class="qty-control">
+                        <button class="qty-btn" onclick="changeQty(${item.id}, -1)">−</button>
+                        <span class="qty-num">${item.qty}</span>
+                        <button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function changeQty(id, delta) {
+            if (!cart[id]) return;
+            cart[id].qty += delta;
+            if (cart[id].qty <= 0) delete cart[id];
+            updateCartUI();
+        }
+
+        function toggleCart() {
+            document.getElementById('cartPanel').classList.toggle('open');
+            document.getElementById('cartOverlay').classList.toggle('open');
+        }
+
+        function toggleWishlist(id, btn) {
+            if (wishlist.has(id)) {
+                wishlist.delete(id);
+                btn.classList.remove('active');
+                showToast('Removed from wishlist');
+            } else {
+                wishlist.add(id);
+                btn.classList.add('active');
+                showToast('❤️ Added to wishlist!');
+            }
+        }
+
+        function contactFarmer(name) {
+            showToast(`📞 Connecting to ${name}...`);
+        }
+
+        function checkout() {
+            showToast('🎉 ऑर्डर दिया गया! Order placed successfully!');
+            setTimeout(() => { cart = {}; updateCartUI(); toggleCart(); }, 1500);
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2500);
+        }
+
+        // Init
+        renderProducts(products);
+    </script>
+</body>
+</html>

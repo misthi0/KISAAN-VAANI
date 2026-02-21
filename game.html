@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kisan Pong 🏓 - Play & Earn Rewards</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green-deep: #1a4a1a;
+            --green-mid: #2d7a2d;
+            --green-light: #4caf50;
+            --gold: #f5c842;
+            --cream: #fffbf0;
+            --white: #ffffff;
+            --text-dark: #1a2e1a;
+            --text-muted: #6b7c6b;
+            --border: #e4efe4;
+            --shadow: 0 8px 30px rgba(26,74,26,0.12);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--cream);
+            min-height: 100vh;
+            color: var(--text-dark);
+        }
+
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, var(--green-deep), var(--green-mid));
+            padding: 0 28px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .nav-logo {
+            font-family: 'Yatra One', cursive;
+            font-size: 1.3rem;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .wallet-chip {
+            background: rgba(245,200,66,0.2);
+            border: 1px solid rgba(245,200,66,0.4);
+            color: var(--gold);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .back-link {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.8rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .back-link:hover { color: white; }
+
+        /* Page layout */
+        .page-wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px 20px;
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 24px;
+        }
+
+        /* ---- GAME SECTION ---- */
+        .game-section {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .game-header {
+            background: linear-gradient(135deg, #0d2d0d, #1a4a1a);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .game-title {
+            font-family: 'Yatra One', cursive;
+            font-size: 1.4rem;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .score-chips {
+            display: flex;
+            gap: 10px;
+        }
+
+        .score-chip {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .score-chip.gold { background: rgba(245,200,66,0.2); border-color: rgba(245,200,66,0.4); color: var(--gold); }
+
+        /* Canvas wrapper */
+        .canvas-wrap {
+            position: relative;
+            background: #0a1a0a;
+            display: flex;
+            justify-content: center;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        /* Overlay screens */
+        .overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(10,26,10,0.92);
+            backdrop-filter: blur(4px);
+            z-index: 10;
+            transition: opacity 0.3s;
+        }
+
+        .overlay.hidden { opacity: 0; pointer-events: none; }
+
+        .overlay-title {
+            font-family: 'Yatra One', cursive;
+            font-size: 2.2rem;
+            color: var(--gold);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .overlay-sub {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        .overlay-points {
+            color: #4caf50;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .play-btn {
+            background: linear-gradient(135deg, var(--green-mid), var(--green-light));
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 13px 36px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 6px 20px rgba(45,122,45,0.4);
+        }
+
+        .play-btn:hover { transform: scale(1.05); box-shadow: 0 8px 28px rgba(45,122,45,0.5); }
+
+        /* Game info bar */
+        .game-info-bar {
+            background: #f5faf5;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .info-item i { color: var(--green-light); }
+
+        /* ---- RIGHT SIDEBAR ---- */
+        .sidebar { display: flex; flex-direction: column; gap: 18px; }
+
+        .card {
+            background: white;
+            border-radius: 18px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 0.88rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title i { color: var(--green-light); }
+
+        /* Rewards card */
+        .reward-balance {
+            text-align: center;
+            background: linear-gradient(135deg, #e8f5e9, #f1faf1);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 16px;
+            border: 2px solid #c8e6c9;
+        }
+
+        .reward-amount {
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: var(--green-mid);
+            line-height: 1;
+        }
+
+        .reward-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .points-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.82rem;
+        }
+
+        .points-row:last-child { border-bottom: none; }
+        .points-row .label { color: var(--text-muted); }
+        .points-row .value { font-weight: 700; color: var(--green-mid); }
+
+        .progress-bar-wrap {
+            margin: 12px 0 6px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.74rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e8f5e9;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--green-mid), var(--green-light));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        /* Withdraw section */
+        .withdraw-form { display: flex; flex-direction: column; gap: 12px; }
+
+        .form-field label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-field input {
+            width: 100%;
+            padding: 11px 14px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.88rem;
+            outline: none;
+            transition: all 0.2s;
+            background: #fafff9;
+        }
+
+        .form-field input:focus {
+            border-color: var(--green-light);
+            box-shadow: 0 0 0 3px rgba(76,175,80,0.1);
+        }
+
+        .withdraw-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--green-mid), var(--green-light));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 13px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .withdraw-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        .withdraw-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .withdraw-note {
+            text-align: center;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Loan card */
+        .loan-unlock {
+            background: linear-gradient(135deg, #fff8e1, #fff3cd);
+            border: 2px solid #ffe082;
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 14px;
+        }
+
+        .loan-unlock .lock-icon { font-size: 2rem; margin-bottom: 8px; }
+        .loan-unlock h4 { font-size: 0.9rem; font-weight: 700; color: #7b5800; margin-bottom: 4px; }
+        .loan-unlock p { font-size: 0.75rem; color: #9e7300; line-height: 1.5; }
+
+        .loan-progress-label {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .loan-unlocked {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            border: 2px solid #4caf50;
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 14px;
+        }
+
+        .loan-unlocked h4 { font-size: 0.9rem; font-weight: 700; color: var(--green-deep); margin-bottom: 4px; }
+        .loan-unlocked p { font-size: 0.75rem; color: var(--green-mid); }
+
+        .loan-options { display: flex; flex-direction: column; gap: 8px; }
+
+        .loan-option {
+            background: white;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .loan-option:hover { border-color: var(--green-light); background: #f9fff9; }
+        .loan-option.selected { border-color: var(--green-light); background: #f1faf1; }
+
+        .loan-option-left .amount { font-weight: 700; font-size: 0.9rem; color: var(--green-deep); }
+        .loan-option-left .tenure { font-size: 0.72rem; color: var(--text-muted); }
+        .loan-option-right .emi { font-size: 0.78rem; font-weight: 600; color: var(--green-mid); }
+        .loan-option-right .rate { font-size: 0.68rem; color: var(--text-muted); }
+
+        .apply-loan-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #f5c842, #f0a500);
+            color: var(--green-deep);
+            border: none;
+            border-radius: 12px;
+            padding: 13px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .apply-loan-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(245,200,66,0.4); }
+        .apply-loan-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        /* Transaction history */
+        .txn-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.8rem;
+        }
+
+        .txn-item:last-child { border-bottom: none; }
+
+        .txn-icon {
+            width: 34px; height: 34px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .txn-icon.earn { background: #e8f5e9; }
+        .txn-icon.withdraw { background: #fff3e0; }
+        .txn-icon.loan { background: #e3f2fd; }
+
+        .txn-info { flex: 1; }
+        .txn-desc { font-weight: 600; color: var(--text-dark); }
+        .txn-date { font-size: 0.7rem; color: var(--text-muted); }
+        .txn-amt { font-weight: 700; }
+        .txn-amt.positive { color: var(--green-mid); }
+        .txn-amt.negative { color: #e53935; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-overlay.open .modal { transform: scale(1); }
+
+        .modal-icon { font-size: 3rem; margin-bottom: 12px; }
+        .modal-title { font-size: 1.3rem; font-weight: 700; color: var(--text-dark); margin-bottom: 8px; }
+        .modal-body { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
+        .modal-btn {
+            background: linear-gradient(135deg, var(--green-mid), var(--green-light));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 32px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .modal-btn:hover { opacity: 0.9; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--green-deep);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+            transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+            z-index: 600;
+            white-space: nowrap;
+        }
+
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        @media (max-width: 860px) {
+            .page-wrap { grid-template-columns: 1fr; }
+            .sidebar { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        }
+
+        @media (max-width: 560px) {
+            .sidebar { grid-template-columns: 1fr; }
+            .score-chips { gap: 6px; }
+            .score-chip { font-size: 0.72rem; padding: 5px 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+        <div class="modal-icon" id="modalIcon">✅</div>
+        <div class="modal-title" id="modalTitle">Success!</div>
+        <div class="modal-body" id="modalBody">Done</div>
+        <button class="modal-btn" onclick="closeModal()">OK</button>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-logo"><i class="fas fa-table-tennis"></i> Kisan Pong 🏓</div>
+    <div class="nav-right">
+        <div class="wallet-chip"><i class="fas fa-coins"></i> ₹<span id="navWallet">0.00</span></div>
+        <a href="index.html" class="back-link"><i class="fas fa-home"></i> Home</a>
+    </div>
+</nav>
+
+<div class="page-wrap">
+
+    <!-- GAME -->
+    <div class="game-section">
+        <div class="game-header">
+            <div class="game-title"><i class="fas fa-table-tennis"></i> Kisan Pong</div>
+            <div class="score-chips">
+                <div class="score-chip"><i class="fas fa-star" style="color:var(--gold)"></i> Score: <span id="scoreDisplay">0</span></div>
+                <div class="score-chip gold"><i class="fas fa-trophy"></i> Best: <span id="highScoreDisplay">0</span></div>
+            </div>
+        </div>
+
+        <div class="canvas-wrap">
+            <canvas id="gameCanvas" width="680" height="400"></canvas>
+
+            <!-- Start overlay -->
+            <div class="overlay" id="startOverlay">
+                <div style="font-size:3rem; margin-bottom:12px;">🏓</div>
+                <div class="overlay-title">Kisan Pong</div>
+                <div class="overlay-sub">खेलें और इनाम कमाएँ!</div>
+                <div class="overlay-sub">Play & earn real rewards</div>
+                <div class="overlay-points" style="margin-top:12px;">10 points = ₹1 reward 🌾</div>
+                <button class="play-btn" onclick="startGame()">
+                    <i class="fas fa-play"></i> खेलना शुरू करें / Start
+                </button>
+            </div>
+
+            <!-- Game over overlay -->
+            <div class="overlay hidden" id="gameOverOverlay">
+                <div class="overlay-title">Game Over! 🌾</div>
+                <div class="overlay-sub">Your Score: <strong id="finalScore" style="color:white">0</strong></div>
+                <div class="overlay-sub">Points Earned: <strong id="finalPoints" style="color:var(--gold)">0</strong></div>
+                <div class="overlay-points" id="rewardEarned">+₹0.00 added to wallet!</div>
+                <button class="play-btn" onclick="startGame()" style="margin-top:16px;">
+                    <i class="fas fa-redo"></i> Play Again
+                </button>
+            </div>
+        </div>
+
+        <div class="game-info-bar">
+            <div class="info-item"><i class="fas fa-mouse-pointer"></i> Move paddle with mouse/touch</div>
+            <div class="info-item"><i class="fas fa-coins"></i> Each point = 10 game points</div>
+            <div class="info-item"><i class="fas fa-gift"></i> 10 points = ₹1 reward</div>
+            <div class="info-item"><i class="fas fa-lock-open"></i> 500 pts = Loan unlock</div>
+        </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+
+        <!-- Rewards Card -->
+        <div class="card">
+            <div class="card-title"><i class="fas fa-wallet"></i> My Rewards</div>
+
+            <div class="reward-balance">
+                <div class="reward-amount">₹<span id="walletBalance">0.00</span></div>
+                <div class="reward-label">Available Balance</div>
+            </div>
+
+            <div class="points-row">
+                <span class="label">🎮 Total Points</span>
+                <span class="value" id="totalPointsDisplay">0</span>
+            </div>
+            <div class="points-row">
+                <span class="label">🏆 Games Played</span>
+                <span class="value" id="gamesPlayedDisplay">0</span>
+            </div>
+            <div class="points-row">
+                <span class="label">💸 Total Withdrawn</span>
+                <span class="value" id="totalWithdrawnDisplay">₹0.00</span>
+            </div>
+
+            <div class="progress-bar-wrap">
+                <div class="progress-label">
+                    <span>Loan Progress</span>
+                    <span id="loanProgressLabel">0 / 500 pts</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="loanProgressFill" style="width:0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Withdraw Card -->
+        <div class="card">
+            <div class="card-title"><i class="fas fa-money-bill-wave"></i> Withdraw Rewards</div>
+
+            <div class="withdraw-form">
+                <div class="form-field">
+                    <label>Amount (₹)</label>
+                    <input type="number" id="withdrawAmt" placeholder="Min ₹10" min="10">
+                </div>
+                <div class="form-field">
+                    <label>UPI ID / Phone Number</label>
+                    <input type="text" id="withdrawUPI" placeholder="e.g. 9876543210 or name@upi">
+                </div>
+                <button class="withdraw-btn" onclick="handleWithdraw()">
+                    <i class="fas fa-paper-plane"></i> Withdraw to Bank
+                </button>
+                <div class="withdraw-note">Min ₹10 | Processing: 24–48 hours</div>
+            </div>
+        </div>
+
+        <!-- Loan Card -->
+        <div class="card">
+            <div class="card-title"><i class="fas fa-hand-holding-usd"></i> Kisan Loan 🌾</div>
+
+            <div id="loanLocked">
+                <div class="loan-unlock">
+                    <div class="lock-icon">🔒</div>
+                    <h4>Loan Locked</h4>
+                    <p>Earn <strong>500 game points</strong> to unlock instant farm loans up to ₹50,000!</p>
+                </div>
+                <div class="loan-progress-label">
+                    <span>Points to unlock</span>
+                    <span id="ptsToUnlock">500 more needed</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="loanLockFill" style="width:0%"></div>
+                </div>
+            </div>
+
+            <div id="loanUnlocked" style="display:none">
+                <div class="loan-unlocked">
+                    <div style="font-size:1.5rem; margin-bottom:6px;">🎉</div>
+                    <h4>Loan Unlocked!</h4>
+                    <p>You've earned the trust! Apply for an instant farm loan.</p>
+                </div>
+
+                <div class="loan-options">
+                    <div class="loan-option selected" onclick="selectLoan(this, 5000)">
+                        <div class="loan-option-left">
+                            <div class="amount">₹5,000</div>
+                            <div class="tenure">6 months</div>
+                        </div>
+                        <div class="loan-option-right">
+                            <div class="emi">EMI: ₹880/mo</div>
+                            <div class="rate">@ 5% p.a.</div>
+                        </div>
+                    </div>
+                    <div class="loan-option" onclick="selectLoan(this, 15000)">
+                        <div class="loan-option-left">
+                            <div class="amount">₹15,000</div>
+                            <div class="tenure">12 months</div>
+                        </div>
+                        <div class="loan-option-right">
+                            <div class="emi">EMI: ₹1,285/mo</div>
+                            <div class="rate">@ 4% p.a.</div>
+                        </div>
+                    </div>
+                    <div class="loan-option" onclick="selectLoan(this, 50000)">
+                        <div class="loan-option-left">
+                            <div class="amount">₹50,000</div>
+                            <div class="tenure">24 months</div>
+                        </div>
+                        <div class="loan-option-right">
+                            <div class="emi">EMI: ₹2,170/mo</div>
+                            <div class="rate">@ 3.5% p.a.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="apply-loan-btn" onclick="applyLoan()">
+                    <i class="fas fa-check-circle"></i> Apply for Loan
+                </button>
+            </div>
+        </div>
+
+        <!-- Transaction History -->
+        <div class="card">
+            <div class="card-title"><i class="fas fa-history"></i> History</div>
+            <div id="txnList">
+                <div style="text-align:center; color:var(--text-muted); font-size:0.82rem; padding:16px 0;">
+                    No transactions yet.<br>Play to earn! 🌾
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+// =====================
+// GAME STATE
+// =====================
+let gameState = {
+    wallet: 0,
+    totalPoints: 0,
+    gamesPlayed: 0,
+    totalWithdrawn: 0,
+    transactions: [],
+    selectedLoan: 5000,
+    loanUnlocked: false,
+    highScore: 0
+};
+
+let score = 0;
+let gameRunning = false;
+let animId;
+
+// =====================
+// CANVAS SETUP
+// =====================
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+// Responsive canvas
+function resizeCanvas() {
+    const w = canvas.parentElement.clientWidth;
+    canvas.width = Math.min(w, 680);
+    canvas.height = Math.min(Math.round(canvas.width * 0.58), 400);
+    if (gameRunning) drawGame();
+}
+
+// Game objects
+let ball, paddle, aiPaddle, particles;
+
+function initGame() {
+    const W = canvas.width, H = canvas.height;
+    ball = {
+        x: W / 2, y: H / 2,
+        vx: (Math.random() > 0.5 ? 1 : -1) * (W * 0.006),
+        vy: (Math.random() > 0.5 ? 1 : -1) * (W * 0.004),
+        r: W * 0.018,
+        trail: []
+    };
+    paddle = {
+        x: W * 0.025,
+        y: H / 2 - H * 0.12,
+        w: W * 0.018,
+        h: H * 0.25,
+        score: 0
+    };
+    aiPaddle = {
+        x: W * 0.955,
+        y: H / 2 - H * 0.12,
+        w: W * 0.018,
+        h: H * 0.25
+    };
+    particles = [];
+    score = 0;
+}
+
+// =====================
+// INPUT
+// =====================
+canvas.addEventListener('mousemove', e => {
+    if (!gameRunning) return;
+    const rect = canvas.getBoundingClientRect();
+    const scaleY = canvas.height / rect.height;
+    paddle.y = (e.clientY - rect.top) * scaleY - paddle.h / 2;
+    paddle.y = Math.max(0, Math.min(canvas.height - paddle.h, paddle.y));
+});
+
+canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (!gameRunning) return;
+    const rect = canvas.getBoundingClientRect();
+    const scaleY = canvas.height / rect.height;
+    paddle.y = (e.touches[0].clientY - rect.top) * scaleY - paddle.h / 2;
+    paddle.y = Math.max(0, Math.min(canvas.height - paddle.h, paddle.y));
+}, { passive: false });
+
+// =====================
+// GAME LOOP
+// =====================
+function startGame() {
+    document.getElementById('startOverlay').classList.add('hidden');
+    document.getElementById('gameOverOverlay').classList.add('hidden');
+    cancelAnimationFrame(animId);
+    initGame();
+    gameRunning = true;
+    gameLoop();
+}
+
+function gameLoop() {
+    if (!gameRunning) return;
+    updateGame();
+    drawGame();
+    animId = requestAnimationFrame(gameLoop);
+}
+
+function updateGame() {
+    const W = canvas.width, H = canvas.height;
+
+    // Ball trail
+    ball.trail.push({ x: ball.x, y: ball.y });
+    if (ball.trail.length > 10) ball.trail.shift();
+
+    // Move ball
+    ball.x += ball.vx;
+    ball.y += ball.vy;
+
+    // Wall bounce top/bottom
+    if (ball.y - ball.r <= 0) { ball.y = ball.r; ball.vy *= -1; spawnParticles(ball.x, ball.y, '#4caf50'); }
+    if (ball.y + ball.r >= H) { ball.y = H - ball.r; ball.vy *= -1; spawnParticles(ball.x, ball.y, '#4caf50'); }
+
+    // AI paddle (gets harder as score increases)
+    const aiSpeed = Math.min(H * 0.018 + score * 0.4, H * 0.06);
+    const aiCenter = aiPaddle.y + aiPaddle.h / 2;
+    if (aiCenter < ball.y - 10) aiPaddle.y += aiSpeed;
+    else if (aiCenter > ball.y + 10) aiPaddle.y -= aiSpeed;
+    aiPaddle.y = Math.max(0, Math.min(H - aiPaddle.h, aiPaddle.y));
+
+    // Ball vs player paddle
+    if (ball.x - ball.r <= paddle.x + paddle.w &&
+        ball.x + ball.r >= paddle.x &&
+        ball.y >= paddle.y &&
+        ball.y <= paddle.y + paddle.h &&
+        ball.vx < 0) {
+        ball.vx *= -1.05;
+        const hitPos = (ball.y - (paddle.y + paddle.h / 2)) / (paddle.h / 2);
+        ball.vy = hitPos * H * 0.008;
+        ball.x = paddle.x + paddle.w + ball.r;
+        score++;
+        updateScoreDisplay();
+        spawnParticles(ball.x, ball.y, '#f5c842');
+        // Speed cap
+        const maxSpeed = W * 0.018;
+        if (Math.abs(ball.vx) > maxSpeed) ball.vx = Math.sign(ball.vx) * maxSpeed;
+    }
+
+    // Ball vs AI paddle
+    if (ball.x + ball.r >= aiPaddle.x &&
+        ball.x - ball.r <= aiPaddle.x + aiPaddle.w &&
+        ball.y >= aiPaddle.y &&
+        ball.y <= aiPaddle.y + aiPaddle.h &&
+        ball.vx > 0) {
+        ball.vx *= -1;
+        spawnParticles(ball.x, ball.y, '#4caf50');
+    }
+
+    // Ball out left = game over
+    if (ball.x + ball.r < 0) {
+        endGame();
+        return;
+    }
+
+    // Ball out right = AI missed (bonus?)
+    if (ball.x - ball.r > W) {
+        ball.vx *= -1;
+        ball.x = W - ball.r * 2;
+    }
+
+    // Update particles
+    particles = particles.filter(p => p.life > 0);
+    particles.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        p.vy += 0.2;
+        p.life -= 3;
+    });
+}
+
+function spawnParticles(x, y, color) {
+    for (let i = 0; i < 8; i++) {
+        particles.push({
+            x, y,
+            vx: (Math.random() - 0.5) * 6,
+            vy: (Math.random() - 0.5) * 6,
+            color,
+            life: 100
+        });
+    }
+}
+
+function drawGame() {
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    // Background
+    ctx.fillStyle = '#0a1a0a';
+    ctx.fillRect(0, 0, W, H);
+
+    // Center dashed line
+    ctx.setLineDash([10, 10]);
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(W / 2, 0);
+    ctx.lineTo(W / 2, H);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Ball trail
+    ball.trail.forEach((pos, i) => {
+        const alpha = i / ball.trail.length * 0.4;
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, ball.r * (i / ball.trail.length), 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(245,200,66,${alpha})`;
+        ctx.fill();
+    });
+
+    // Ball (wheat emoji style — draw as glowing circle)
+    const grad = ctx.createRadialGradient(ball.x - ball.r * 0.3, ball.y - ball.r * 0.3, 0, ball.x, ball.y, ball.r * 1.2);
+    grad.addColorStop(0, '#fff9c4');
+    grad.addColorStop(0.5, '#f5c842');
+    grad.addColorStop(1, '#e65100');
+    ctx.beginPath();
+    ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
+    ctx.fillStyle = grad;
+    ctx.shadowColor = '#f5c842';
+    ctx.shadowBlur = 15;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Draw wheat symbol on ball
+    ctx.font = `${ball.r * 1.4}px serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🌾', ball.x, ball.y);
+
+    // Player paddle
+    const pGrad = ctx.createLinearGradient(paddle.x, 0, paddle.x + paddle.w, 0);
+    pGrad.addColorStop(0, '#2d7a2d');
+    pGrad.addColorStop(1, '#4caf50');
+    ctx.fillStyle = pGrad;
+    ctx.shadowColor = '#4caf50';
+    ctx.shadowBlur = 12;
+    ctx.beginPath();
+    ctx.roundRect(paddle.x, paddle.y, paddle.w, paddle.h, 4);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // AI paddle
+    const aiGrad = ctx.createLinearGradient(aiPaddle.x, 0, aiPaddle.x + aiPaddle.w, 0);
+    aiGrad.addColorStop(0, '#c62828');
+    aiGrad.addColorStop(1, '#e53935');
+    ctx.fillStyle = aiGrad;
+    ctx.shadowColor = '#e53935';
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.roundRect(aiPaddle.x, aiPaddle.y, aiPaddle.w, aiPaddle.h, 4);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Particles
+    particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = p.color + Math.floor(p.life / 100 * 255).toString(16).padStart(2,'0');
+        ctx.fill();
+    });
+
+    // Score overlay on canvas
+    ctx.font = `bold ${H * 0.09}px Poppins`;
+    ctx.fillStyle = 'rgba(255,255,255,0.08)';
+    ctx.textAlign = 'center';
+    ctx.fillText(score, W / 2, H * 0.18);
+}
+
+function updateScoreDisplay() {
+    document.getElementById('scoreDisplay').textContent = score;
+    if (score > gameState.highScore) {
+        gameState.highScore = score;
+        document.getElementById('highScoreDisplay').textContent = score;
+    }
+}
+
+function endGame() {
+    gameRunning = false;
+    cancelAnimationFrame(animId);
+
+    const pointsEarned = score * 10;
+    const rewardEarned = pointsEarned / 100; // 100 points = ₹1
+
+    gameState.totalPoints += pointsEarned;
+    gameState.wallet = Math.round((gameState.wallet + rewardEarned) * 100) / 100;
+    gameState.gamesPlayed++;
+
+    if (rewardEarned > 0) {
+        addTransaction('earn', `🎮 Game #${gameState.gamesPlayed} — Score ${score}`, `+₹${rewardEarned.toFixed(2)}`, true);
+    }
+
+    updateUI();
+
+    document.getElementById('finalScore').textContent = score;
+    document.getElementById('finalPoints').textContent = pointsEarned;
+    document.getElementById('rewardEarned').textContent = `+₹${rewardEarned.toFixed(2)} added to wallet! 🌾`;
+    document.getElementById('gameOverOverlay').classList.remove('hidden');
+
+    showToast(`🎉 Score: ${score} | +₹${rewardEarned.toFixed(2)} earned!`);
+}
+
+// =====================
+// REWARDS / WALLET
+// =====================
+function handleWithdraw() {
+    const amt = parseFloat(document.getElementById('withdrawAmt').value);
+    const upi = document.getElementById('withdrawUPI').value.trim();
+
+    if (!amt || amt < 10) { showToast('⚠️ Minimum withdrawal is ₹10'); return; }
+    if (!upi) { showToast('⚠️ Please enter UPI ID or phone number'); return; }
+    if (amt > gameState.wallet) { showToast('⚠️ Insufficient balance!'); return; }
+
+    gameState.wallet = Math.round((gameState.wallet - amt) * 100) / 100;
+    gameState.totalWithdrawn = Math.round((gameState.totalWithdrawn + amt) * 100) / 100;
+
+    addTransaction('withdraw', `💸 Withdrawal to ${upi}`, `-₹${amt.toFixed(2)}`, false);
+    updateUI();
+
+    document.getElementById('withdrawAmt').value = '';
+    document.getElementById('withdrawUPI').value = '';
+
+    showModal('✅', 'Withdrawal Submitted!',
+        `Withdrawal of ₹${amt.toFixed(2)} submitted successfully!\nYour payment will be processed within 24–48 hours to: ${upi}`);
+}
+
+function addTransaction(type, desc, amt, positive) {
+    const icons = { earn: '🎮', withdraw: '💸', loan: '🏦' };
+    gameState.transactions.unshift({ type, desc, amt, positive, date: new Date().toLocaleDateString('en-IN') });
+    if (gameState.transactions.length > 10) gameState.transactions.pop();
+    renderTransactions();
+}
+
+function renderTransactions() {
+    const list = document.getElementById('txnList');
+    if (gameState.transactions.length === 0) {
+        list.innerHTML = `<div style="text-align:center;color:var(--text-muted);font-size:0.82rem;padding:16px 0;">No transactions yet.<br>Play to earn! 🌾</div>`;
+        return;
+    }
+    list.innerHTML = gameState.transactions.map(t => `
+        <div class="txn-item">
+            <div class="txn-icon ${t.type}">${t.type === 'earn' ? '🎮' : t.type === 'loan' ? '🏦' : '💸'}</div>
+            <div class="txn-info">
+                <div class="txn-desc">${t.desc}</div>
+                <div class="txn-date">${t.date}</div>
+            </div>
+            <div class="txn-amt ${t.positive ? 'positive' : 'negative'}">${t.amt}</div>
+        </div>
+    `).join('');
+}
+
+// =====================
+// LOAN
+// =====================
+function selectLoan(el, amt) {
+    document.querySelectorAll('.loan-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    gameState.selectedLoan = amt;
+}
+
+function applyLoan() {
+    if (!gameState.loanUnlocked) return;
+    showModal('🏦', 'Loan Application Submitted!',
+        `Your application for ₹${gameState.selectedLoan.toLocaleString('en-IN')} has been submitted!\n\nA Kisan Vaani representative will contact you within 24 hours to verify your details and process the loan.`);
+    addTransaction('loan', `🏦 Loan applied — ₹${gameState.selectedLoan.toLocaleString('en-IN')}`, `₹${gameState.selectedLoan.toLocaleString('en-IN')}`, true);
+}
+
+// =====================
+// UI UPDATE
+// =====================
+function updateUI() {
+    const pts = gameState.totalPoints;
+    const LOAN_THRESHOLD = 500;
+
+    document.getElementById('walletBalance').textContent = gameState.wallet.toFixed(2);
+    document.getElementById('navWallet').textContent = gameState.wallet.toFixed(2);
+    document.getElementById('totalPointsDisplay').textContent = pts;
+    document.getElementById('gamesPlayedDisplay').textContent = gameState.gamesPlayed;
+    document.getElementById('totalWithdrawnDisplay').textContent = `₹${gameState.totalWithdrawn.toFixed(2)}`;
+
+    // Loan progress
+    const pct = Math.min((pts / LOAN_THRESHOLD) * 100, 100);
+    document.getElementById('loanProgressFill').style.width = pct + '%';
+    document.getElementById('loanProgressLabel').textContent = `${Math.min(pts, LOAN_THRESHOLD)} / ${LOAN_THRESHOLD} pts`;
+    document.getElementById('loanLockFill').style.width = pct + '%';
+    document.getElementById('ptsToUnlock').textContent = pts >= LOAN_THRESHOLD ? '🎉 Unlocked!' : `${LOAN_THRESHOLD - pts} more needed`;
+
+    if (pts >= LOAN_THRESHOLD && !gameState.loanUnlocked) {
+        gameState.loanUnlocked = true;
+        document.getElementById('loanLocked').style.display = 'none';
+        document.getElementById('loanUnlocked').style.display = 'block';
+        showModal('🎉', 'Loan Unlocked!', 'Congratulations! You\'ve earned 500 game points and unlocked access to instant Kisan farm loans up to ₹50,000!');
+    }
+}
+
+// =====================
+// MODAL & TOAST
+// =====================
+function showModal(icon, title, body) {
+    document.getElementById('modalIcon').textContent = icon;
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalBody').textContent = body;
+    document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+}
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// =====================
+// INIT
+// =====================
+window.addEventListener('resize', () => { resizeCanvas(); if (!gameRunning) drawWaitScreen(); });
+
+function drawWaitScreen() {
+    const W = canvas.width, H = canvas.height;
+    ctx.fillStyle = '#0a1a0a';
+    ctx.fillRect(0, 0, W, H);
+}
+
+resizeCanvas();
+drawWaitScreen();
+renderTransactions();
+</script>
+</body>
+</html>
