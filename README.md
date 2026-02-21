@@ -127,16 +127,3 @@ The Kisan Pong game is integrated with a financial incentive system designed to 
 - Earning 500 game points unlocks access to farm loans
 - Loan amounts available are Rs 5,000 at 5 percent, Rs 15,000 at 4 percent, and Rs 50,000 at 3.5 percent per annum
 
----
-
-## Contact
-
-Helpline: 1800-XXX-XXXX
-
-Email: support@kisanvaani.in
-
----
-
-## License
-
-This project was built for hackathon purposes by Team Binary Brains. All rights reserved.
